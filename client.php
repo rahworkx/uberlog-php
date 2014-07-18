@@ -7,12 +7,18 @@ class Client
 
     static $connection = null;
     static $namespace = null;
-    static $socket_address = "unix:///tmp/redis2.sock";
+    static $socket_address = "unix:///tmp/logger-proxy.sock";
 
     public static function getConnection()
     {
         if (self::$connection === null) {
-            self::$connection = new RespClient(self::$socket_address, -1);
+            try {
+                self::$connection = new RespClient(self::$socket_address, -1);
+            } catch (\Exception $e) {
+                self::$connection = null;
+                return false;
+            }
+
         }
         return self::$connection;
     }
@@ -20,40 +26,44 @@ class Client
     protected static function log($level, $category, $slug, $extra_params)
     {
         $c = self::getConnection();
+        if ($c === false) {
+            return false;
+        }
         $extra_params = (array) $extra_params;
         if (self::$namespace !== null) {
             $extra_params["__namespace"] = self::$namespace;
         }
-        return $c->log($level, $category, $slug, json_encode($extra_params));
+        try {
+            $return = $c->log($level, $category, $slug, json_encode($extra_params));
+        } catch (\Exception $e) {
+            self::$connection = null;
+            return false;
+        }
+        return $return;
     }
 
     public static function success($category, $slug, $extra_params)
     {
-        $c = self::getConnection();
-        return $c->log("success", $category, $slug, json_encode($extra_params));
+        return self::log("success", $category, $slug, $extra_params);
     }
 
     public static function info($category, $slug, $extra_params)
     {
-        $c = self::getConnection();
-        return $c->log("info", $category, $slug, json_encode($extra_params));
+        return self::log("info", $category, $slug, $extra_params);
     }
 
     public static function warning($category, $slug, $extra_params)
     {
-        $c = self::getConnection();
-        return $c->log("warning", $category, $slug, json_encode($extra_params));
+        return self::log("warning", $category, $slug, $extra_params);
     }
 
     public static function error($category, $slug, $extra_params)
     {
-        $c = self::getConnection();
-        return $c->log("error", $category, $slug, json_encode($extra_params));
+        return self::log("error", $category, $slug, $extra_params);
     }
 
     public static function debug($category, $slug, $extra_params)
     {
-        $c = self::getConnection();
-        return $c->log("debug", $category, $slug, json_encode($extra_params));
+        return self::log("debug", $category, $slug, $extra_params);
     }
 }

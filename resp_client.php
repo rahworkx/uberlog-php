@@ -5,7 +5,7 @@ class RespClient
 {
     private $__sock;
 
-    function __construct($host="localhost", $port="6379", $timeout = null) {
+    function __construct($host, $port, $timeout = null) {
         $timeout = $timeout ?: ini_get("default_socket_timeout");
         $this->__sock = @fsockopen($host, $port, $errno, $errstr, $timeout);
         if ($this->__sock === FALSE) {
