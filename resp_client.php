@@ -1,5 +1,5 @@
 <?php
-namespace Logger;
+namespace Uberlog;
 
 class RespClient
 {
