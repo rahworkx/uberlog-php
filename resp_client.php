@@ -39,7 +39,7 @@ class RespClient
         $reply = trim(fgets($this->__sock, 512));
         switch (substr($reply, 0, 1)) {
         case '-':
-            throw new RedisException(trim(substr($reply, 4)));
+            throw new \Exception(trim(substr($reply, 4)));
             break;
         case '+':
             $response = substr(trim($reply), 1);
