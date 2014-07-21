@@ -1,13 +1,14 @@
 <?php
-namespace Logger;
+namespace UberLog;
 
 include_once(__DIR__."/resp_client.php");
-class Client
+
+class Log
 {
 
     static $connection = null;
     static $namespace = null;
-    static $socket_address = "unix:///tmp/logger-proxy.sock";
+    static $socket_address = "unix:///tmp/uberlog-proxy.sock";
 
     public static function getConnection()
     {
