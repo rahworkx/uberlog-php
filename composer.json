@@ -1,0 +1,10 @@
+{
+    "name": "kreate_technology/uberlog-php",
+    "repositories": [
+    ],
+    "autoload": {
+        "psr-4": {
+                "UberLog\\": "/"
+        }
+    }
+}
