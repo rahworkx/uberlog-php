@@ -1,32 +1,33 @@
 <?php
 namespace UberLog;
 
-include_once(__DIR__."/resp_client.php");
+include_once(__DIR__."/http_client.php");
 
 class Log
 {
 
-    static $connection = null;
+    static $http_clients = null;
     static $namespace = null;
-    static $socket_address = "unix:///tmp/uberlog-proxy.sock";
+    static $api_end_point = "http://127.0.0.1:9876";
 
-    public static function getConnection()
+    public static function getConnection($level, $category, $slug)
     {
-        if (self::$connection === null) {
+        $key = $level.$category.$slug;
+        if (self::$http_clients[$key] === null) {
             try {
-                self::$connection = new RespClient(self::$socket_address, -1);
+                self::$http_clients[$key] = new HttpClient(self::$api_end_point.'/log/'.$level.'/'.$category.'/'.$slug.'/');
             } catch (\Exception $e) {
-                self::$connection = null;
+                self::$http_clients[$key] = null;
                 return false;
             }
 
         }
-        return self::$connection;
+        return self::$http_clients[$key];
     }
 
     protected static function log($level, $category, $slug, $extra_params = array())
     {
-        $c = self::getConnection();
+        $c = self::getConnection($level, $category, $slug);
         if ($c === false) {
             return false;
         }
@@ -38,9 +39,9 @@ class Log
             $extra_params = new \StdClass();
         }
         try {
-            $return = $c->log($level, $category, $slug, json_encode($extra_params));
+
+            $return = $c->postArray($extra_params);
         } catch (\Exception $e) {
-            self::$connection = null;
             return false;
         }
         return $return;
