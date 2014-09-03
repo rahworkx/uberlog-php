@@ -30,7 +30,6 @@ composer install
 ```
 
 Using
-Installing
 -----------
 
 Include composer's autoload on your file and you can use:
