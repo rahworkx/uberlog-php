@@ -1,4 +1,4 @@
-logger-php
+uberlog-php
 ==========
 
 This is a client library to interact with UberLog.
