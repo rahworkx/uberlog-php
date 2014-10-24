@@ -13,7 +13,7 @@ class Log
     public static function getConnection($level, $category, $slug)
     {
         $key = $level.$category.$slug;
-        if (self::$http_clients[$key] === null) {
+        if (!isset(self::$http_clients[$key]) || self::$http_clients[$key] === null) {
             try {
                 self::$http_clients[$key] = new HttpClient(self::$api_end_point.'/log/'.$level.'/'.$category.'/'.$slug.'/');
             } catch (\Exception $e) {
