@@ -1,8 +1,6 @@
 {
     "name": "kreate_technology/uberlog-php",
-    "repositories": [
-    ],
-    "autoload": {
+        "autoload": {
         "psr-4": {
                 "UberLog\\": ""
         }
